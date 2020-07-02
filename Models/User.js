@@ -64,13 +64,25 @@ function validateUser(user) {
   return joi.validate(user, schema);
 }
 
-function updateUser(user) {
+function updateUserName(user) {
   const schema = {
     newFirstName: joi.string().required(),
     newLastName: joi.string().required(),
+  };
+  return joi.validate(user, schema);
+}
+
+function updateUserPassword(user) {
+  const schema = {
     oldPW: joi.string().required(),
     newPW: joi.string().min(6).max(12).required(),
-    phone: joi.number().required(),
+  };
+  return joi.validate(user, schema);
+}
+
+function updateUserPhone(user) {
+  const schema = {
+    phone: joi.number().required,
   };
   return joi.validate(user, schema);
 }
@@ -78,6 +90,8 @@ function updateUser(user) {
 module.exports = {
   User,
   validateUser,
-  updateUser,
+  updateUserName,
+  updateUserPassword,
+  updateUserPhone,
   userSchema,
 };
