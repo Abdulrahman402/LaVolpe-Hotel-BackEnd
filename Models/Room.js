@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 const joi = require("joi");
 
-const keys = require("../Config/keys");
-
 const Schema = mongoose.Schema;
 
 const roomSchema = Schema(
@@ -55,12 +53,36 @@ function validateRoom(room) {
   return joi.validate(room, schema);
 }
 
-function updateRoom(room) {
+function updateRoomId(room) {
   const schema = {
     id: joi.number().required(),
+  };
+  return joi.validate(room, schema);
+}
+
+function updateRoomCapacity(room) {
+  const schema = {
     capacity: joi.number(),
+  };
+  return joi.validate(room, schema);
+}
+
+function updateRoomFloor(room) {
+  const schema = {
     floor: joi.number(),
+  };
+  return joi.validate(room, schema);
+}
+
+function updateRoomView(room) {
+  const schema = {
     view: joi.string(),
+  };
+  return joi.validate(room, schema);
+}
+
+function updateRoomPricePerNight(room) {
+  const schema = {
     pricePerNight: joi.number(),
   };
   return joi.validate(room, schema);
@@ -69,5 +91,9 @@ function updateRoom(room) {
 module.exports = {
   Room,
   validateRoom,
-  updateRoom,
+  updateRoomId,
+  updateRoomCapacity,
+  updateRoomFloor,
+  updateRoomView,
+  updateRoomPricePerNight,
 };
