@@ -57,7 +57,7 @@ function validateUser(user) {
   const schema = {
     firstName: joi.string().required(),
     lastName: joi.string().required(),
-    email: joi.string().required().email,
+    email: joi.string().required().email(),
     password: joi.string().required(),
     phone: joi.number().required(),
   };

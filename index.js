@@ -7,6 +7,8 @@ const mongoose = require("mongoose");
 const app = express();
 
 const keys = require("./Config/keys");
+const user = require("./Routes/user");
+const auth = require("./Routes/auth");
 
 app.get("/", async (req, res) => {
   res.send("Hello");
@@ -24,6 +26,9 @@ const server = app.listen(port, () => {
   winston.info(`Listening on port ${port}`);
 });
 
+app.use(express.json());
 app.use(cors());
+app.use("/api/user", user);
+app.use("/api/auth", auth);
 
 module.exports = server;
