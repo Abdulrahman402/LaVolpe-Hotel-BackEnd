@@ -25,7 +25,7 @@ const userSchema = new Schema(
       required: true,
     },
     phone: {
-      type: Number,
+      type: String,
       required: true,
     },
     isAdmin: {
@@ -75,14 +75,14 @@ function updateUserName(user) {
 function updateUserPassword(user) {
   const schema = {
     oldPW: joi.string().required(),
-    newPW: joi.string().min(6).max(12).required(),
+    newPW: joi.string().required(),
   };
   return joi.validate(user, schema);
 }
 
 function updateUserPhone(user) {
   const schema = {
-    phone: joi.number().required,
+    newPhone: joi.string().required(),
   };
   return joi.validate(user, schema);
 }
