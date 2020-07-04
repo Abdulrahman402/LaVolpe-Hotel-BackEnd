@@ -9,6 +9,7 @@ const app = express();
 const keys = require("./Config/keys");
 const user = require("./Routes/user");
 const auth = require("./Routes/auth");
+const room = require("./Routes/room");
 
 app.get("/", async (req, res) => {
   res.send("Hello");
@@ -30,5 +31,6 @@ app.use(express.json());
 app.use(cors());
 app.use("/api/user", user);
 app.use("/api/auth", auth);
+app.use("/api/room", room);
 
 module.exports = server;

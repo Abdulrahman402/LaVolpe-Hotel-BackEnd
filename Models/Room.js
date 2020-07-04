@@ -17,13 +17,12 @@ const roomSchema = new Schema(
       type: Number,
       required: true,
     },
-    veiw: {
+    view: {
       type: String,
       required: true,
     },
     availability: {
       type: Boolean,
-      required: true,
       default: true,
     },
     currentGuest: {
@@ -35,6 +34,10 @@ const roomSchema = new Schema(
     pricePerNight: {
       type: Number,
       required: true,
+    },
+    maintenance: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
