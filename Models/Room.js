@@ -3,7 +3,7 @@ const joi = require("joi");
 
 const Schema = mongoose.Schema;
 
-const roomSchema = Schema(
+const roomSchema = new Schema(
   {
     id: {
       type: Number,
