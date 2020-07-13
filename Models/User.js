@@ -33,9 +33,9 @@ const userSchema = new Schema(
       default: false,
     },
     oldBooking: {
-      roomId: {
+      ticket: {
         type: [Schema.Types.ObjectId],
-        ref: "Room",
+        ref: "Ticket",
       },
     },
   },
