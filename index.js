@@ -10,6 +10,7 @@ const keys = require("./Config/keys");
 const user = require("./Routes/user");
 const auth = require("./Routes/auth");
 const room = require("./Routes/room");
+const ticket = require("./Routes/ticket");
 
 app.get("/", async (req, res) => {
   res.send("Hello");
@@ -32,5 +33,6 @@ app.use(cors());
 app.use("/api/user", user);
 app.use("/api/auth", auth);
 app.use("/api/room", room);
+app.use("/api/ticket", ticket);
 
 module.exports = server;
