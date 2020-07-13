@@ -1,5 +1,4 @@
 const express = require("express");
-const _ = require("lodash");
 const moment = require("moment");
 
 const router = express.Router();
@@ -12,6 +11,7 @@ const {
 } = require("../Models/Ticket");
 const auth = require("../Middlewares/auth");
 const { Room } = require("../Models/Room");
+const { User } = require("../Models/User");
 
 router.post("/addTicket/:id", auth, async (req, res) => {
   let start = req.body.startDate;
@@ -38,7 +38,28 @@ router.post("/addTicket/:id", auth, async (req, res) => {
   });
   await ticket.save();
 
+  await User.findOneAndUpdate(
+    { _id: req.user._id },
+    { $push: { "oldBooking.ticket": req.params.id } },
+    { new: true }
+  );
+
+  res.send("Ticket Added");
+});
+
+router.get("/myTicket", auth, async (req, res) => {
+  const ticket = await Ticket.find({ guestId: req.user._id })
+    .populate("guestId", "firstName lastName  -_id")
+    .populate("roomId", "id -_id")
+    .select();
+
   res.send(ticket);
+});
+
+router.delete("/deleteTicket/:id", auth, async (req, res) => {
+  await Ticket.findOneAndRemove({ _id: req.params.id });
+
+  res.send("Ticket Deleted");
 });
 
 module.exports = router;
