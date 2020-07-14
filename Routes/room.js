@@ -122,11 +122,15 @@ router.post("/allRooms", auth, async (req, res) => {
         { floor: floor },
         { pricePerNight: { $gte: fromPrice, $lte: toPrice } },
       ],
-    });
+    })
+      .populate("currentGuest.guestId", "firstName lastName -_id")
+      .select();
 
     res.send(room);
   }
-  const room = await Room.find().select();
+  const room = await Room.find()
+    .populate("currentGuest.guestId", "firstName lastName -_id")
+    .select();
   res.send(room);
 });
 

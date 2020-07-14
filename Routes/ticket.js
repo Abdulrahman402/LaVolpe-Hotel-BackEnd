@@ -44,6 +44,12 @@ router.post("/addTicket/:id", auth, async (req, res) => {
     { new: true }
   );
 
+  await Room.findOneAndUpdate(
+    { _id: req.params.id },
+    { $set: { "currentGuest.guestId": req.user._id } },
+    { new: true }
+  );
+
   res.send("Ticket Added");
 });
 
