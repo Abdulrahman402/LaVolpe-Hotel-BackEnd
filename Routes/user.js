@@ -11,6 +11,7 @@ const {
   updateUserPassword,
   updateUserPhone,
 } = require("../Models/User");
+const { Ticket } = require("../Models/Ticket");
 const auth = require("../Middlewares/auth");
 const isAdmin = require("../Middlewares/isAdmin");
 
@@ -45,6 +46,14 @@ router.get("/allusers", auth, isAdmin, async (req, res) => {
 router.get("/allAdmins", auth, isAdmin, async (req, res) => {
   const admin = await User.find({ isAdmin: true }).select("-password");
   res.send(admin);
+});
+
+router.get("/bookingHistory", auth, async (req, res) => {
+  const bookHistory = await Ticket.find({ guestId: req.user._id })
+    .populate("guestId", "firstName lastName -_id")
+    .populate("roomId", "id -_id");
+
+  res.send(bookHistory);
 });
 
 router.get("/me", auth, async (req, res) => {
