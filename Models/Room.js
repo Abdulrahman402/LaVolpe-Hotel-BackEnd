@@ -91,6 +91,17 @@ function updateRoomPricePerNight(room) {
   return joi.validate(room, schema);
 }
 
+function filterRoom(room) {
+  const schema = {
+    capacity: joi.number(),
+    view: joi.string(),
+    floor: joi.number(),
+    fromPrice: joi.number(),
+    toPrice: joi.number(),
+  };
+  return joi.validate(room, schema);
+}
+
 module.exports = {
   Room,
   validateRoom,
@@ -99,4 +110,5 @@ module.exports = {
   updateRoomFloor,
   updateRoomView,
   updateRoomPricePerNight,
+  filterRoom,
 };
