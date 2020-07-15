@@ -1,117 +1,35 @@
 const express = require("express");
-const _ = require("lodash");
-const bcrypt = require("bcryptjs");
 
 const router = express.Router();
 
-const {
-  User,
-  validateUser,
-  updateUserName,
-  updateUserPassword,
-  updateUserPhone,
-} = require("../Models/User");
-const { Ticket } = require("../Models/Ticket");
+// Authentication and Authorization Middleware functions
 const auth = require("../Middlewares/auth");
 const isAdmin = require("../Middlewares/isAdmin");
 
-router.post("/signUp", async (req, res) => {
-  const { error } = validateUser(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+// Routes controller functions path
+const signUp = require("../Controllers/User/SignUp");
+const allUsers = require("../Controllers/User/allUsers");
+const allAdmins = require("../Controllers/User/allAdmins");
+const bookingHistory = require("../Controllers/User/bookingHistory");
+const myProfile = require("../Controllers/User/myProfile");
+const changeName = require("../Controllers/User/changeName");
+const changePassword = require("../Controllers/User/changePassword");
+const changePhone = require("../Controllers/User/changePhone");
 
-  let user = await User.findOne({ email: req.body.email });
-  if (user) return res.status(400).send("User already registered");
+router.post("/signUp", signUp.SignUp);
 
-  user = new User(
-    _.pick(req.body, ["email", "firstName", "lastName", "phone", "password"])
-  );
+router.get("/allusers", auth, isAdmin, allUsers.allUsers);
 
-  const salt = await bcrypt.genSalt(10);
-  user.password = await bcrypt.hash(req.body.password, salt);
+router.get("/allAdmins", auth, isAdmin, allAdmins.allAdmins);
 
-  const token = await user.generateAuthToken();
+router.get("/bookingHistory", auth, bookingHistory.bookingHistory);
 
-  await user.save();
+router.get("/me", auth, myProfile.myProfile);
 
-  res
-    .header("x-auth-token", token)
-    .send(_.pick(user, "email", "firstName", "lastName", "phone"));
-});
+router.put("/changeName", auth, changeName.changeName);
 
-router.get("/allusers", auth, isAdmin, async (req, res) => {
-  const user = await User.find({ isAdmin: false }).select("-password");
-  res.send(user);
-});
+router.put("/changePhone", auth, changePhone.changePhone);
 
-router.get("/allAdmins", auth, isAdmin, async (req, res) => {
-  const admin = await User.find({ isAdmin: true }).select("-password");
-  res.send(admin);
-});
-
-router.get("/bookingHistory", auth, async (req, res) => {
-  const bookHistory = await Ticket.find({ guestId: req.user._id })
-    .populate("guestId", "firstName lastName -_id")
-    .populate("roomId", "id -_id");
-
-  res.send(bookHistory);
-});
-
-router.get("/me", auth, async (req, res) => {
-  const user = await User.findOne({ _id: req.user._id }).select("-password");
-  res.send(user);
-});
-
-router.put("/changeName", auth, async (req, res) => {
-  const { error } = updateUserName(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  await User.findByIdAndUpdate(
-    req.user._id,
-    { firstName: req.body.newFirstName, lastName: req.body.newLastName },
-    { new: true }
-  );
-
-  const user = await User.findOne({ _id: req.user._id });
-
-  res.send(_.pick(user, "firstName", "lastName"));
-});
-
-router.put("/changePhone", auth, async (req, res) => {
-  const { error } = updateUserPhone(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  await User.findByIdAndUpdate(
-    req.user._id,
-    { phone: req.body.newPhone },
-    { new: true }
-  );
-
-  const user = await User.findOne({ _id: req.user._id });
-
-  res.send(_.pick(user, "firstName", "lastName", "phone"));
-});
-
-router.put("/changePassword", auth, async (req, res) => {
-  const { error } = updateUserPassword(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  const user = await User.findOne({ _id: req.user._id });
-
-  const oldPW = await bcrypt.compare(req.body.oldPW, user.password);
-  if (!oldPW) return res.status(400).send("Invalid old password");
-
-  const newUser = await User.findByIdAndUpdate(
-    req.user._id,
-    { password: req.body.newPW },
-    { new: true }
-  );
-
-  const salt = await bcrypt.genSalt(10);
-  user.password = await bcrypt.hash(newUser.password, salt);
-
-  await user.save();
-
-  res.send(_.pick(user, "firstName", "lastName"));
-});
+router.put("/changePassword", auth, changePassword.changePassword);
 
 module.exports = router;
