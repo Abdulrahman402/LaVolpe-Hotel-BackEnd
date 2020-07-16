@@ -1,137 +1,48 @@
 const express = require("express");
-const _ = require("lodash");
 
 const router = express.Router();
 
-const {
-  Room,
-  validateRoom,
-  updateRoomId,
-  updateRoomCapacity,
-  updateRoomFloor,
-  updateRoomView,
-  updateRoomPricePerNight,
-  filterRoom,
-} = require("../Models/Room");
-
+// Authentication and Authorization Middleware functions
 const auth = require("../Middlewares/auth");
 const isAdmin = require("../Middlewares/isAdmin");
 
-router.post("/addRoom", auth, isAdmin, async (req, res) => {
-  const { error } = validateRoom(req.body);
-  if (error) res.status(400).send(error.details[0].message);
+// Routes controller functions path
+const addRoom = require("../Controllers/Room/addRoom");
+const removeRoom = require("../Controllers/Room/removeRoom");
+const toMaintenance = require("../Controllers/Room/toMaintenance");
+const changeRoomId = require("../Controllers/Room/changeRoomId");
+const changeRoomCapacity = require("../Controllers/Room/changeRoomCapacity");
+const changeRoomFloor = require("../Controllers/Room/changeRoomFloor");
+const changeRoomView = require("../Controllers/Room/changeRoomView");
+const changeRoomPrice = require("../Controllers/Room/changeRoomPrice");
+const allRooms = require("../Controllers/Room/allRooms");
 
-  let room = new Room(
-    _.pick(req.body, ["id", "capacity", "floor", "view", "pricePerNight"])
-  );
+router.post("/allRooms", auth, allRooms.allRooms);
+router.put("/changeRoomView/:id", auth, isAdmin, changeRoomView.changeRoomView);
+router.post("/addRoom", auth, isAdmin, addRoom.addRoom);
+router.delete("/removeRoom/:id", auth, isAdmin, removeRoom.removeRoom);
+router.put("/toMaintenance/:id", auth, isAdmin, toMaintenance.toMaintenance);
+router.put("/changeRoomId/:id", auth, isAdmin, changeRoomId.changeRoomId);
 
-  await room.save();
+router.put(
+  "/changeRoomCapacity/:id",
+  auth,
+  isAdmin,
+  changeRoomCapacity.changeRoomCapacity
+);
 
-  res.send(room);
-});
+router.put(
+  "/changeRoomFloor/:id",
+  auth,
+  isAdmin,
+  changeRoomFloor.changeRoomFloor
+);
 
-router.delete("/removeRoom/:id", auth, isAdmin, async (req, res) => {
-  await Room.findOneAndRemove({ _id: req.params.id });
-
-  res.send("Room  removed from system");
-});
-
-router.put("/toMaintenance/:id", auth, isAdmin, async (req, res) => {
-  await Room.findOneAndUpdate(
-    { _id: req.params.id },
-    { $set: { maintenance: true } },
-    { new: true }
-  );
-  res.send("Room is under maintenance");
-});
-
-router.put("/changeRoomId/:id", auth, isAdmin, async (req, res) => {
-  const { error } = updateRoomId(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  await Room.findOneAndUpdate(
-    { _id: req.params.id },
-    { $set: { id: req.body.id } },
-    { new: true }
-  );
-  res.send("ID changed");
-});
-
-router.put("/changeRoomCapacity/:id", auth, isAdmin, async (req, res) => {
-  const { error } = updateRoomCapacity(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  await Room.findOneAndUpdate(
-    { _id: req.params.id },
-    { $set: { capacity: req.body.capacity } },
-    { new: true }
-  );
-  res.send("Capacity changed");
-});
-
-router.put("/changeRoomFloor/:id", auth, isAdmin, async (req, res) => {
-  const { error } = updateRoomFloor(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  await Room.findOneAndUpdate(
-    { _id: req.params.id },
-    { $set: { floor: req.body.floor } },
-    { new: true }
-  );
-  res.send("floor changed");
-});
-
-router.put("/changeRoomView/:id", auth, isAdmin, async (req, res) => {
-  const { error } = updateRoomView(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  await Room.findOneAndUpdate(
-    { _id: req.params.id },
-    { $set: { view: req.body.view } },
-    { new: true }
-  );
-  res.send("View changed");
-});
-
-router.put("/changeRoomPrice/:id", auth, isAdmin, async (req, res) => {
-  const { error } = updateRoomPricePerNight(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  await Room.findOneAndUpdate(
-    { _id: req.params.id },
-    { $set: { pricePerNight: req.body.price } },
-    { new: true }
-  );
-  res.send("Price changed");
-});
-router.post("/allRooms", auth, async (req, res) => {
-  const { error } = filterRoom(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  const capacity = req.body.capacity;
-  const floor = req.body.floor;
-  const view = req.body.view;
-  const fromPrice = req.body.fromPrice;
-  const toPrice = req.body.toPrice;
-
-  if (capacity || floor || view || fromPrice || toPrice) {
-    const room = await Room.find({
-      $or: [
-        { capacity: capacity },
-        { view: view },
-        { floor: floor },
-        { pricePerNight: { $gte: fromPrice, $lte: toPrice } },
-      ],
-    })
-      .populate("currentGuest.guestId", "firstName lastName -_id")
-      .select();
-
-    res.send(room);
-  }
-  const room = await Room.find()
-    .populate("currentGuest.guestId", "firstName lastName -_id")
-    .select();
-  res.send(room);
-});
+router.put(
+  "/changeRoomPrice/:id",
+  auth,
+  isAdmin,
+  changeRoomPrice.changeRoomPrice
+);
 
 module.exports = router;
