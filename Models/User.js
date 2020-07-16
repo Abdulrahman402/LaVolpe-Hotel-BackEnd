@@ -20,6 +20,10 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    contactEmail: {
+      type: String,
+      required: true,
+    },
     password: {
       type: String,
       required: true,
@@ -29,6 +33,10 @@ const userSchema = new Schema(
       required: true,
     },
     isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    isVerefied: {
       type: Boolean,
       default: false,
     },
@@ -44,7 +52,7 @@ const userSchema = new Schema(
 
 userSchema.methods.generateAuthToken = async function () {
   const token = jwt.sign(
-    { _id: this._id, isAdmin: this.isAdmin },
+    { _id: this._id, isAdmin: this.isAdmin, isVerefied: this.isVerefied },
     keys.tokenSecretKey
   );
 
@@ -57,6 +65,7 @@ function validateUser(user) {
   const schema = {
     firstName: joi.string().required(),
     lastName: joi.string().required(),
+    contactEmail: joi.string().required().email(),
     email: joi.string().required().email(),
     password: joi.string().required(),
     phone: joi.number().required(),
