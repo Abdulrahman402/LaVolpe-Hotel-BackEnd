@@ -41,5 +41,22 @@ exports.addTicket = async function (req, res, next) {
     { new: true }
   );
 
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "example@example.com",
+      pass: "password",
+    },
+  });
+
+  const mailoptions = {
+    from: "example@example.com",
+    to: user.contactEmail,
+    subject: "Booking",
+    text: `You have successfully booked room with ID: ${room.id}`,
+  };
+
+  transporter.sendMail(mailoptions);
+
   res.send("Ticket Added");
 };

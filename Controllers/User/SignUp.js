@@ -1,7 +1,9 @@
 const _ = require("lodash");
 const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
 
 const { User, validateUser } = require("../../Models/User");
+const email = require("../../Email/email");
 
 exports.SignUp = async function (req, res, next) {
   const { error } = validateUser(req.body);
@@ -11,7 +13,14 @@ exports.SignUp = async function (req, res, next) {
   if (user) return res.status(400).send("User already registered");
 
   user = new User(
-    _.pick(req.body, ["email", "firstName", "lastName", "phone", "password"])
+    _.pick(req.body, [
+      "email",
+      "firstName",
+      "lastName",
+      "phone",
+      "password",
+      "contactEmail",
+    ])
   );
 
   const salt = await bcrypt.genSalt(10);
@@ -20,6 +29,25 @@ exports.SignUp = async function (req, res, next) {
   const token = await user.generateAuthToken();
 
   await user.save();
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "example@example.com",
+      pass: "password",
+    },
+  });
+  console.log(user.contactEmail);
+
+  const mailoptions = {
+    from: "example@example.com",
+    to: user.contactEmail,
+    subject: "Registration",
+    text:
+      "You have successfully Registered, Click link below to verify your account",
+  };
+
+  transporter.sendMail(mailoptions);
 
   res
     .header("x-auth-token", token)
