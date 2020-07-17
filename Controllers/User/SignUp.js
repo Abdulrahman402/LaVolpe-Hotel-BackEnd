@@ -3,7 +3,6 @@ const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 
 const { User, validateUser } = require("../../Models/User");
-const email = require("../../Email/email");
 
 exports.SignUp = async function (req, res, next) {
   const { error } = validateUser(req.body);
@@ -37,7 +36,6 @@ exports.SignUp = async function (req, res, next) {
       pass: "password",
     },
   });
-  console.log(user.contactEmail);
 
   const mailoptions = {
     from: "example@example.com",
