@@ -21,7 +21,7 @@ router.post("/signIn", async (req, res) => {
 
   res
     .header("x-auth-token", token)
-    .send(_.pick(user, ["firstName", "lastName", "email"]));
+    .send(_.pick(user, ["firstName", "lastName", "email", "phone"]));
 });
 
 function validate(req) {
