@@ -1,10 +1,13 @@
 const moment = require("moment");
+const nodemailer = require("nodemailer");
 
 const { Ticket, validateTicket } = require("../../Models/Ticket");
 const { User } = require("../../Models/User");
 const { Room } = require("../../Models/Room");
 
 exports.addTicket = async function (req, res, next) {
+  const user = await User.findOne({ _id: req.user._id });
+
   let start = req.body.startDate;
   let end = req.body.endDate;
 
@@ -31,26 +34,20 @@ exports.addTicket = async function (req, res, next) {
 
   await User.findOneAndUpdate(
     { _id: req.user._id },
-    { $push: { "oldBooking.ticket": req.params.id } },
-    { new: true }
-  );
-
-  await Room.findOneAndUpdate(
-    { _id: req.params.id },
-    { $set: { "currentGuest.guestId": req.user._id } },
+    { $push: { "currentBooking.ticket": req.params.id } },
     { new: true }
   );
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "example@example.com",
-      pass: "password",
+      user: "abduwemoh@gmail.com",
+      pass: "Dontshootme1",
     },
   });
 
   const mailoptions = {
-    from: "example@example.com",
+    from: "abduwemoh@gmail.com",
     to: user.contactEmail,
     subject: "Booking",
     text: `You have successfully booked room with ID: ${room.id}`,

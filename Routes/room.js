@@ -5,7 +5,6 @@ const router = express.Router();
 // Authentication and Authorization Middleware functions
 const auth = require("../Middlewares/auth");
 const isAdmin = require("../Middlewares/isAdmin");
-const isVerefied = require("../Middlewares/isVerefied");
 
 // Routes controller functions path
 const addRoom = require("../Controllers/Room/addRoom");
@@ -16,49 +15,25 @@ const changeRoomCapacity = require("../Controllers/Room/changeRoomCapacity");
 const changeRoomFloor = require("../Controllers/Room/changeRoomFloor");
 const changeRoomView = require("../Controllers/Room/changeRoomView");
 const changeRoomPrice = require("../Controllers/Room/changeRoomPrice");
+const changeRoomBranch = require("../Controllers/Room/changeRoomBranch");
 const allRooms = require("../Controllers/Room/allRooms");
 
-router.post("/allRooms", allRooms.allRooms);
+router.get("/allRooms", allRooms.allRooms);
 
-router.put(
-  "/changeRoomView/:id",
-  auth,
-  isAdmin,
-  isVerefied,
-  changeRoomView.changeRoomView
-);
+router.put("/changeRoomView/:id", auth, isAdmin, changeRoomView.changeRoomView);
 
-router.post("/addRoom", auth, isAdmin, isVerefied, addRoom.addRoom);
+router.post("/addRoom", auth, isAdmin, addRoom.addRoom);
 
-router.delete(
-  "/removeRoom/:id",
-  auth,
-  isAdmin,
-  isVerefied,
-  removeRoom.removeRoom
-);
+router.delete("/removeRoom/:id", auth, isAdmin, removeRoom.removeRoom);
 
-router.put(
-  "/toMaintenance/:id",
-  auth,
-  isAdmin,
-  isVerefied,
-  toMaintenance.toMaintenance
-);
+router.put("/toMaintenance/:id", auth, isAdmin, toMaintenance.toMaintenance);
 
-router.put(
-  "/changeRoomId/:id",
-  auth,
-  isAdmin,
-  isVerefied,
-  changeRoomId.changeRoomId
-);
+router.put("/changeRoomId/:id", auth, isAdmin, changeRoomId.changeRoomId);
 
 router.put(
   "/changeRoomCapacity/:id",
   auth,
   isAdmin,
-  isVerefied,
   changeRoomCapacity.changeRoomCapacity
 );
 
@@ -66,7 +41,6 @@ router.put(
   "/changeRoomFloor/:id",
   auth,
   isAdmin,
-  isVerefied,
   changeRoomFloor.changeRoomFloor
 );
 
@@ -74,8 +48,14 @@ router.put(
   "/changeRoomPrice/:id",
   auth,
   isAdmin,
-  isVerefied,
   changeRoomPrice.changeRoomPrice
+);
+
+router.put(
+  "/changeRoomBranch/:id",
+  auth,
+  isAdmin,
+  changeRoomBranch.changeRoomBranch
 );
 
 module.exports = router;
