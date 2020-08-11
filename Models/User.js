@@ -20,15 +20,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    contactEmail: {
-      type: String,
-      required: true,
-    },
     password: {
-      type: String,
-      required: true,
-    },
-    phone: {
       type: String,
       required: true,
     },
@@ -36,23 +28,13 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    isVerefied: {
-      type: Boolean,
-      default: false,
-    },
-    oldBooking: {
-      ticket: {
-        type: [Schema.Types.ObjectId],
-        ref: "Ticket",
-      },
-    },
   },
   { timestamps: true }
 );
 
 userSchema.methods.generateAuthToken = async function () {
   const token = jwt.sign(
-    { _id: this._id, isAdmin: this.isAdmin, isVerefied: this.isVerefied },
+    { _id: this._id, isAdmin: this.isAdmin },
     keys.tokenSecretKey
   );
 
@@ -65,10 +47,8 @@ function validateUser(user) {
   const schema = {
     firstName: joi.string().required(),
     lastName: joi.string().required(),
-    contactEmail: joi.string().required().email(),
     email: joi.string().required().email(),
     password: joi.string().required(),
-    phone: joi.number().required(),
   };
   return joi.validate(user, schema);
 }
@@ -89,18 +69,10 @@ function updateUserPassword(user) {
   return joi.validate(user, schema);
 }
 
-function updateUserPhone(user) {
-  const schema = {
-    newPhone: joi.string().required(),
-  };
-  return joi.validate(user, schema);
-}
-
 module.exports = {
   User,
   validateUser,
   updateUserName,
   updateUserPassword,
-  updateUserPhone,
   userSchema,
 };

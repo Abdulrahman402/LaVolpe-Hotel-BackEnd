@@ -1,6 +1,7 @@
 version: "3"
 services:
   hotel:
+    image: abdulrahman00/hotel:latest
     build:
       context: .
       dockerfile: Dockerfile.dev

@@ -12,14 +12,7 @@ exports.SignUp = async function (req, res, next) {
   if (user) return res.status(400).send("User already registered");
 
   user = new User(
-    _.pick(req.body, [
-      "email",
-      "firstName",
-      "lastName",
-      "phone",
-      "password",
-      "contactEmail",
-    ])
+    _.pick(req.body, ["email", "firstName", "lastName", "password"])
   );
 
   const salt = await bcrypt.genSalt(10);
@@ -33,21 +26,20 @@ exports.SignUp = async function (req, res, next) {
     service: "gmail",
     auth: {
       user: "example@example.com",
-      pass: "password",
+      pass: "example",
     },
   });
 
   const mailoptions = {
     from: "example@example.com",
-    to: user.contactEmail,
+    to: user.email,
     subject: "Registration",
-    text:
-      "You have successfully Registered, Click link below to verify your account",
+    text: "You have successfully Registered",
   };
 
   transporter.sendMail(mailoptions);
 
   res
     .header("x-auth-token", token)
-    .send(_.pick(user, "email", "firstName", "lastName", "phone"));
+    .send(_.pick(user, "email", "firstName", "lastName"));
 };
