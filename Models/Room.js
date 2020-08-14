@@ -7,37 +7,41 @@ const roomSchema = new Schema(
   {
     id: {
       type: Number,
-      required: true,
+      required: true
     },
     capacity: {
       type: Number,
-      required: true,
+      required: true
     },
     floor: {
       type: Number,
-      required: true,
+      required: true
     },
     view: {
       type: String,
-      required: true,
+      required: true
     },
     availability: {
       type: Boolean,
-      default: true,
+      default: true
     },
     pricePerNight: {
       type: Number,
-      required: true,
+      required: true
     },
     maintenance: {
       type: Boolean,
-      default: false,
+      default: false
     },
     branch: {
       type: String,
-      required: true,
+      required: true
     },
-    currentGuest: String,
+    ticket: {
+      type: [Schema.Types.ObjectId],
+      ref: "Ticket"
+    },
+    currentGuest: String
   },
   { timestamps: true }
 );
@@ -51,49 +55,49 @@ function validateRoom(room) {
     floor: joi.number().required(),
     view: joi.string().required(),
     pricePerNight: joi.number().required(),
-    branch: joi.string().required(),
+    branch: joi.string().required()
   };
   return joi.validate(room, schema);
 }
 
 function updateRoomId(room) {
   const schema = {
-    id: joi.number().required(),
+    id: joi.number().required()
   };
   return joi.validate(room, schema);
 }
 
 function updateRoomCapacity(room) {
   const schema = {
-    capacity: joi.number(),
+    capacity: joi.number()
   };
   return joi.validate(room, schema);
 }
 
 function updateRoomFloor(room) {
   const schema = {
-    floor: joi.number(),
+    floor: joi.number()
   };
   return joi.validate(room, schema);
 }
 
 function updateRoomView(room) {
   const schema = {
-    view: joi.string(),
+    view: joi.string()
   };
   return joi.validate(room, schema);
 }
 
 function updateRoomPricePerNight(room) {
   const schema = {
-    pricePerNight: joi.number(),
+    pricePerNight: joi.number()
   };
   return joi.validate(room, schema);
 }
 
 function updateRoomBranch(branch) {
   const schema = {
-    branch: joi.string(),
+    branch: joi.string()
   };
   return joi.validate(branch, schema);
 }
@@ -101,7 +105,7 @@ function updateRoomBranch(branch) {
 function filterRoom(room) {
   const schema = {
     capacity: joi.number(),
-    view: joi.string(),
+    view: joi.string()
   };
   return joi.validate(room, schema);
 }
@@ -115,5 +119,5 @@ module.exports = {
   updateRoomView,
   updateRoomPricePerNight,
   filterRoom,
-  updateRoomBranch,
+  updateRoomBranch
 };
