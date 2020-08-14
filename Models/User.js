@@ -10,29 +10,49 @@ const userSchema = new Schema(
   {
     firstName: {
       type: String,
-      required: true,
+      required: true
     },
     lastName: {
       type: String,
-      required: true,
+      required: true
     },
     email: {
       type: String,
-      required: true,
+      required: true
     },
     password: {
       type: String,
-      required: true,
+      required: true
+    },
+    phone: {
+      type: String,
+      required: true
     },
     isAdmin: {
       type: Boolean,
-      default: false,
+      default: false
     },
+    ticket: {
+      type: Schema.Types.ObjectId,
+      ref: "Ticket"
+    },
+    reservedRoomId: {
+      type: Schema.Types.ObjectId,
+      ref: "Room"
+    },
+    duration: {
+      checkIn: {
+        type: Date
+      },
+      checkOut: {
+        type: Date
+      }
+    }
   },
   { timestamps: true }
 );
 
-userSchema.methods.generateAuthToken = async function () {
+userSchema.methods.generateAuthToken = async function() {
   const token = jwt.sign(
     { _id: this._id, isAdmin: this.isAdmin },
     keys.tokenSecretKey
@@ -47,8 +67,12 @@ function validateUser(user) {
   const schema = {
     firstName: joi.string().required(),
     lastName: joi.string().required(),
-    email: joi.string().required().email(),
+    email: joi
+      .string()
+      .required()
+      .email(),
     password: joi.string().required(),
+    phone: joi.string().required()
   };
   return joi.validate(user, schema);
 }
@@ -56,7 +80,7 @@ function validateUser(user) {
 function updateUserName(user) {
   const schema = {
     newFirstName: joi.string().required(),
-    newLastName: joi.string().required(),
+    newLastName: joi.string().required()
   };
   return joi.validate(user, schema);
 }
@@ -64,7 +88,7 @@ function updateUserName(user) {
 function updateUserPassword(user) {
   const schema = {
     oldPW: joi.string().required(),
-    newPW: joi.string().required(),
+    newPW: joi.string().required()
   };
   return joi.validate(user, schema);
 }
@@ -74,5 +98,5 @@ module.exports = {
   validateUser,
   updateUserName,
   updateUserPassword,
-  userSchema,
+  userSchema
 };

@@ -10,11 +10,20 @@ const isAdmin = require("../Middlewares/isAdmin");
 const addTicket = require("../Controllers/Ticket/addTicket");
 const myTicket = require("../Controllers/Ticket/myTicket");
 const deleteTicket = require("../Controllers/Ticket/deleteTicket");
+const checkIn = require("../Controllers/Ticket/checkIn");
+const checkOut = require("../Controllers/Ticket/checkOut");
+const findTicket = require("../Controllers/Ticket/findTicket");
 
-router.post("/addTicket/:id", addTicket.addTicket);
+router.get("/findTicket", auth, isAdmin, findTicket.findTicket);
 
-router.get("/myTicket", myTicket.myTicket);
+router.post("/addTicket/:id", auth, addTicket.addTicket);
 
-router.delete("/deleteTicket/:id", deleteTicket.deleteTicket);
+router.get("/myTicket", auth, myTicket.myTicket);
+
+router.delete("/deleteTicket/:id", auth, deleteTicket.deleteTicket);
+
+router.put("/checkIn/:id", auth, isAdmin, checkIn.checkIn);
+
+router.delete("/checkOut/:id", auth, isAdmin, checkOut.checkOut);
 
 module.exports = router;

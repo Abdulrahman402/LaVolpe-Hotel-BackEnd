@@ -18,7 +18,7 @@ const changeRoomPrice = require("../Controllers/Room/changeRoomPrice");
 const changeRoomBranch = require("../Controllers/Room/changeRoomBranch");
 const allRooms = require("../Controllers/Room/allRooms");
 
-router.get("/allRooms", allRooms.allRooms);
+router.get("/allRooms", auth, allRooms.allRooms);
 
 router.put("/changeRoomView/:id", auth, isAdmin, changeRoomView.changeRoomView);
 

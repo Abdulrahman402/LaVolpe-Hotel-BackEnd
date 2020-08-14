@@ -4,7 +4,7 @@ const nodemailer = require("nodemailer");
 
 const { User, validateUser } = require("../../Models/User");
 
-exports.SignUp = async function (req, res, next) {
+exports.SignUp = async function(req, res, next) {
   const { error } = validateUser(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -12,7 +12,7 @@ exports.SignUp = async function (req, res, next) {
   if (user) return res.status(400).send("User already registered");
 
   user = new User(
-    _.pick(req.body, ["email", "firstName", "lastName", "password"])
+    _.pick(req.body, ["email", "firstName", "lastName", "password", "phone"])
   );
 
   const salt = await bcrypt.genSalt(10);
@@ -26,20 +26,20 @@ exports.SignUp = async function (req, res, next) {
     service: "gmail",
     auth: {
       user: "example@example.com",
-      pass: "example",
-    },
+      pass: "example"
+    }
   });
 
   const mailoptions = {
     from: "example@example.com",
     to: user.email,
     subject: "Registration",
-    text: "You have successfully Registered",
+    text: "You have successfully Registered"
   };
 
   transporter.sendMail(mailoptions);
 
   res
     .header("x-auth-token", token)
-    .send(_.pick(user, "email", "firstName", "lastName"));
+    .send(_.pick(user, "email", "firstName", "lastName", "phone"));
 };

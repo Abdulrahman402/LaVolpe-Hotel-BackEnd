@@ -1,19 +1,11 @@
-const { User } = require("../../Models/User");
 const { Ticket } = require("../../Models/Ticket");
-
 const moment = require("moment");
 
-exports.myTicket = async function(req, res, next) {
-  //Fetch ticket ID from user collection
-  const user = await User.find({ _id: req.user._id }).select("ticket -_id");
-
-  //Map on ID
-  const ticketId = user.map(id => {
-    return id.ticket;
-  });
-
-  //Fetch ticket from ticket collection
-  const ticket = await Ticket.findOne({ _id: ticketId });
+//Searching for some ticket
+exports.findTicket = async function(req, res, next) {
+  const ticket = await Ticket.findOne({ email: req.query.email });
+  if (!ticket)
+    return res.status(404).send("No such a ticket with this phone number");
 
   //Formatting date when retrieves only
   const formattedStartDate = moment(ticket.startDate).format("MMMM Do YYYY");

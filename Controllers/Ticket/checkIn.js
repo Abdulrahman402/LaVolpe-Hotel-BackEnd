@@ -1,19 +1,15 @@
-const { User } = require("../../Models/User");
 const { Ticket } = require("../../Models/Ticket");
 
 const moment = require("moment");
 
-exports.myTicket = async function(req, res, next) {
-  //Fetch ticket ID from user collection
-  const user = await User.find({ _id: req.user._id }).select("ticket -_id");
-
-  //Map on ID
-  const ticketId = user.map(id => {
-    return id.ticket;
-  });
-
-  //Fetch ticket from ticket collection
-  const ticket = await Ticket.findOne({ _id: ticketId });
+//In this case, the user just arrived to hotel and checks in
+exports.checkIn = async function(req, res, next) {
+  //Updating his ticket to active, which means he is in the hotel
+  const ticket = await Ticket.findOneAndUpdate(
+    { _id: req.params.id },
+    { $set: { isActive: true } },
+    { new: true }
+  );
 
   //Formatting date when retrieves only
   const formattedStartDate = moment(ticket.startDate).format("MMMM Do YYYY");
@@ -28,6 +24,5 @@ exports.myTicket = async function(req, res, next) {
     { "Check in date": formattedStartDate },
     { "Check out date": formattedEndDate }
   ];
-
   res.send(ticketData);
 };

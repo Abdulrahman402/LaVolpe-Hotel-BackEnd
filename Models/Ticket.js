@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const timeZone = require("mongoose-timezone");
 const joi = require("joi");
 
 const Schema = mongoose.Schema;
@@ -7,55 +8,52 @@ const ticketSchema = Schema(
   {
     roomId: {
       type: Schema.Types.ObjectId,
-      ref: "Room",
+      ref: "Room"
     },
-    guestId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+    firstName: {
+      type: String,
+      required: true
+    },
+    lastName: {
+      type: String,
+      required: true
+    },
+    email: {
+      type: String
+    },
+    phone: {
+      type: String,
+      required: true
     },
     startDate: {
-      type: String,
-      required: true,
+      type: Date,
+      required: true
     },
     endDate: {
-      type: String,
-      required: true,
+      type: Date,
+      required: true
     },
     isActive: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   { timestamps: true }
 );
 
+ticketSchema.plugin(timeZone, { paths: ["startDate", "endDate"] });
 const Ticket = mongoose.model("Ticket", ticketSchema);
 
 function validateTicket(ticket) {
   const schema = {
-    startDate: joi.string().required(),
-    endDate: joi.string().required(),
-  };
-  return joi.validate(ticket, schema);
-}
-
-function updateStartTicket(ticket) {
-  const schema = {
-    startDate: joi.string().required(),
-  };
-  return joi.validate(ticket, schema);
-}
-
-function updateEndTicket(ticket) {
-  const schema = {
-    endDate: joi.string().required(),
+    firstName: joi.string().required(),
+    lastName: joi.string().required(),
+    phone: joi.string().required()
   };
   return joi.validate(ticket, schema);
 }
 
 module.exports = {
   Ticket,
-  updateStartTicket,
-  updateEndTicket,
-  validateTicket,
+  validateTicket
 };
