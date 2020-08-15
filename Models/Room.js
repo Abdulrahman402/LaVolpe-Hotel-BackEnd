@@ -21,6 +21,9 @@ const roomSchema = new Schema(
       type: String,
       required: true
     },
+    picture: {
+      type: [String]
+    },
     availability: {
       type: Boolean,
       default: true
