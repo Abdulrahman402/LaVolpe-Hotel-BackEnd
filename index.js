@@ -11,6 +11,7 @@ const user = require("./Routes/user");
 const auth = require("./Routes/auth");
 const room = require("./Routes/room");
 const ticket = require("./Routes/ticket");
+const picture = require("./Controllers/Picture/addPicture");
 
 app.get("/", async (req, res) => {
   res.send("Hello");
@@ -20,7 +21,7 @@ app.get("/", async (req, res) => {
 mongoose
   .connect(keys.mongoURI)
   .then(() => console.log("Connected to Hotel DB"))
-  .catch((err) => console.log("Error while connecting DB", err));
+  .catch(err => console.log("Error while connecting DB", err));
 
 const port = process.env.PORT || 2000;
 
@@ -34,5 +35,6 @@ app.use("/api/user", user);
 app.use("/api/auth", auth);
 app.use("/api/room", room);
 app.use("/api/ticket", ticket);
+app.use("/api/picture", picture);
 
 module.exports = server;
