@@ -22,7 +22,7 @@ const roomSchema = new Schema(
       required: true
     },
     picture: {
-      type: [String]
+      type: []
     },
     availability: {
       type: Boolean,
