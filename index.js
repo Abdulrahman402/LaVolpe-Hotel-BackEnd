@@ -12,6 +12,7 @@ const auth = require("./Routes/auth");
 const room = require("./Routes/room");
 const ticket = require("./Routes/ticket");
 const picture = require("./Controllers/Picture/addPicture");
+const removePic = require("./Controllers/Picture/removePicture");
 
 app.get("/", async (req, res) => {
   res.send("Hello");
@@ -31,10 +32,12 @@ const server = app.listen(port, () => {
 
 app.use(express.json());
 app.use(cors());
+app.use("/Image", express.static("Image"));
 app.use("/api/user", user);
 app.use("/api/auth", auth);
 app.use("/api/room", room);
 app.use("/api/ticket", ticket);
 app.use("/api/picture", picture);
+app.use("/api/removePic", removePic);
 
 module.exports = server;

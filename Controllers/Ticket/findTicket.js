@@ -4,8 +4,7 @@ const moment = require("moment");
 //Searching for some ticket
 exports.findTicket = async function(req, res, next) {
   const ticket = await Ticket.findOne({ email: req.query.email });
-  if (!ticket)
-    return res.status(404).send("No such a ticket with this phone number");
+  if (!ticket) return res.status(404).send("No such a ticket for this email");
 
   //Formatting date when retrieves only
   const formattedStartDate = moment(ticket.startDate).format("MMMM Do YYYY");

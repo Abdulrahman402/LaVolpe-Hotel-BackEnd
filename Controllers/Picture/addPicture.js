@@ -48,6 +48,7 @@ router.post(
     });
     await picture.save();
 
+    console.log(req.file);
     await Room.findOneAndUpdate(
       { _id: req.params.id },
       { $push: { picture: req.file.path } },
